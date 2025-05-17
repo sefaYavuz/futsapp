@@ -1,0 +1,11 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Game (Match Day) Rules
+
+- Organizers can create games with:
+  - Date, time, location, and RSVP deadline
+- Players can mark themselves as "available" or "not available" for each game.
+- RSVP is editable until the deadline passes.

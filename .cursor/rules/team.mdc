@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Team Assignment Rules
+
+- Organizers can click "Assign Teams" to auto-generate balanced teams.
+- Auto-assignment should:
+  - Balance teams by number of players
+  - Respect players’ preferred positions
+- Organizers can manually edit the teams after assignment.

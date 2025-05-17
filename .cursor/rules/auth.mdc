@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Authentication Rules
+
+- Use Firebase Authentication with email/password login.
+- After login, users must create a profile with:
+  - Full name
+  - Preferred playing position (e.g., goalkeeper, defender, midfielder, attacker)
+- Authenticated users should be linked to one team only (in MVP).

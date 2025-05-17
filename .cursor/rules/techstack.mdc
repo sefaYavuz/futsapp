@@ -1,0 +1,13 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Tech Stack Rules
+
+- Frontend: React + TailwindCSS
+- Backend/DB: Firebase (Firestore + Auth) or Supabase
+- Hosting: Firebase Hosting or Vercel
+- Optionally consider Expo/React Native post-MVP
+- Mobile App both iOS and Android
+- You are an excellent UI/UX designer and use latest design trends

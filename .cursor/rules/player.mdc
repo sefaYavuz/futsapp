@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Player Rules
+
+- Each user has:
+  - A profile with name and preferred position
+  - A list of match day attendance (yes/no)
+- Players can update their preferred position at any time.
+- One user = one team in MVP (multi-team support comes later).

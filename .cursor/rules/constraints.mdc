@@ -1,0 +1,10 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# MVP Constraints
+
+- No chat, stats, or notifications (for now).
+- Each user can only belong to one team.
+- Focus only on web/PWA (not native mobile app).
