@@ -17,6 +17,7 @@ export const nl = {
   },
   matches: {
     title: 'Wedstrijden',
+    directions: 'Route',
     new: {
       title: 'Nieuwe Wedstrijd',
       location: 'Locatie',

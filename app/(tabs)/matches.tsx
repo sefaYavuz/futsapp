@@ -5,16 +5,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Alert, ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LOCATIONS, getLocationByName } from '../../constants/Locations';
 import { useTranslation } from '../hooks/useTranslation';
 import { useMatchesStore } from '../store/matches';
 import { useUserStore } from '../store/user';
 import { getRolePermissions } from '../types/user';
-
-const locations = {
-  'Futsal Arena Centrum': require('@/assets/images/zuidhaghe.webp'),
-  'Sportcentrum West': require('@/assets/images/zuidhaghe.webp'),
-  'Futsal Club Oost': require('@/assets/images/zuidhaghe.webp'),
-};
 
 export default function MatchesScreen() {
   const colorScheme = useColorScheme();
@@ -60,7 +55,7 @@ export default function MatchesScreen() {
             style={styles.matchCard}
             onPress={() => router.push(`/matches/${match.id}`)}>
             <ImageBackground
-              source={locations[match.location as keyof typeof locations] || locations['Futsal Arena Centrum']}
+              source={getLocationByName(match.location)?.image || LOCATIONS['futsal-arena-centrum'].image}
               style={styles.matchBackground}
               imageStyle={styles.matchBackgroundImage}>
               <LinearGradient

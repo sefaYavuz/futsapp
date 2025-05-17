@@ -1,21 +1,16 @@
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Colors } from '@/constants/Colors';
+import { LOCATIONS } from '@/constants/Locations';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from '../hooks/useTranslation';
 import { useMatchesStore } from '../store/matches';
 import { useUserStore } from '../store/user';
 import { Match } from '../types/match';
-
-const locations = [
-  'Futsal Arena Centrum',
-  'Sportcentrum West',
-  'Futsal Club Oost',
-];
 
 export default function NewMatchScreen() {
   const colorScheme = useColorScheme();
@@ -25,7 +20,7 @@ export default function NewMatchScreen() {
   const addMatch = useMatchesStore((state) => state.addMatch);
   const { t } = useTranslation();
 
-  const [location, setLocation] = useState(locations[0]);
+  const [location, setLocation] = useState(LOCATIONS[0]);
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
   const [maxPlayers, setMaxPlayers] = useState('10');
@@ -51,7 +46,7 @@ export default function NewMatchScreen() {
 
     const newMatch: Match = {
       id: Date.now().toString(),
-      location,
+      location: location.name,
       date: date.toISOString().split('T')[0],
       time: time.toISOString(),
       maxPlayers: maxPlayersNum,
@@ -65,8 +60,23 @@ export default function NewMatchScreen() {
     router.back();
   };
 
+  const handleDateChange = (event: any, selectedDate?: Date) => {
+    if (event.type === 'set') {
+      setDate(selectedDate || date);
+    }
+    setShowDatePicker(false);
+  };
+
+  const handleTimeChange = (event: any, selectedTime?: Date) => {
+    if (event.type === 'set') {
+      setTime(selectedTime || time);
+    }
+    setShowTimePicker(false);
+  };
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.header}>
         <Pressable
           style={styles.backButton}
@@ -77,96 +87,98 @@ export default function NewMatchScreen() {
         <View style={styles.placeholder} />
       </View>
 
-      <View style={styles.content}>
-        <View style={[styles.formGroup, { backgroundColor: colorScheme === 'dark' ? '#1c1c1e' : '#ffffff' }]}>
-          <Text style={[styles.label, { color: colors.text }]}>{t('matches.new.location')}</Text>
-          <View style={styles.locationContainer}>
-            {locations.map((loc) => (
-              <Pressable
-                key={loc}
-                style={[
-                  styles.locationButton,
-                  location === loc && { backgroundColor: colors.tint },
-                ]}
-                onPress={() => setLocation(loc)}>
-                <Text
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}>
+        <View style={styles.content}>
+          <View style={[styles.formGroup, { backgroundColor: colorScheme === 'dark' ? '#1c1c1e' : '#ffffff' }]}>
+            <Text style={[styles.label, { color: colors.text }]}>{t('matches.new.location')}</Text>
+            <View style={styles.locationContainer}>
+              {Object.values(LOCATIONS).map((loc) => (
+                <Pressable
+                  key={loc.id}
                   style={[
-                    styles.locationButtonText,
-                    { color: location === loc ? 'white' : colors.text },
-                  ]}>
-                  {loc}
-                </Text>
-              </Pressable>
-            ))}
+                    styles.locationButton,
+                    location?.id === loc.id && { backgroundColor: colors.tint },
+                  ]}
+                  onPress={() => setLocation(loc)}>
+                  <Text
+                    style={[
+                      styles.locationButtonText,
+                      { color: location?.id === loc.id ? 'white' : colors.text },
+                    ]}>
+                    {loc.name}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
           </View>
-        </View>
 
-        <View style={[styles.formGroup, { backgroundColor: colorScheme === 'dark' ? '#1c1c1e' : '#ffffff' }]}>
-          <Text style={[styles.label, { color: colors.text }]}>{t('matches.new.date')}</Text>
-          <Pressable
-            style={[styles.dateTimeButton, { backgroundColor: colors.tint }]}
-            onPress={() => setShowDatePicker(true)}>
-            <Text style={styles.dateTimeButtonText}>
-              {date.toLocaleDateString('nl-NL', {month: 'short', day: 'numeric'})}
-            </Text>
-          </Pressable>
-          {showDatePicker && (
-            <DateTimePicker
-              value={date}
-              mode="date"
-              display="default"
-              onChange={(event, selectedDate) => {
-                setShowDatePicker(false);
-                if (selectedDate) {
-                  setDate(selectedDate);
-                }
-              }}
+          <View style={[styles.formGroup, { backgroundColor: colorScheme === 'dark' ? '#1c1c1e' : '#ffffff' }]}>
+            <Text style={[styles.label, { color: colors.text }]}>{t('matches.new.date')}</Text>
+            <Pressable
+              style={[styles.dateTimeButton, { backgroundColor: colors.tint }]}
+              onPress={() => setShowDatePicker(true)}>
+              <Text style={styles.dateTimeButtonText}>
+                {date.toLocaleDateString('nl-NL', {month: 'short', day: 'numeric'})}
+              </Text>
+            </Pressable>
+            {showDatePicker && (
+              <View style={styles.pickerContainer}>
+                <DateTimePicker
+                  testID="datePicker"
+                  value={date}
+                  mode="date"
+                  display="spinner"
+                  onChange={handleDateChange}
+                  minimumDate={new Date()}
+                />
+              </View>
+            )}
+          </View>
+
+          <View style={[styles.formGroup, { backgroundColor: colorScheme === 'dark' ? '#1c1c1e' : '#ffffff' }]}>
+            <Text style={[styles.label, { color: colors.text }]}>{t('matches.new.time')}</Text>
+            <Pressable
+              style={[styles.dateTimeButton, { backgroundColor: colors.tint }]}
+              onPress={() => setShowTimePicker(true)}>
+              <Text style={styles.dateTimeButtonText}>
+                {time.toLocaleTimeString('nl-NL', {hour: '2-digit', minute: '2-digit'})}
+              </Text>
+            </Pressable>
+            {showTimePicker && (
+              <View style={styles.pickerContainer}>
+                <DateTimePicker
+                  testID="timePicker"
+                  value={time}
+                  mode="time"
+                  display="spinner"
+                  onChange={handleTimeChange}
+                />
+              </View>
+            )}
+          </View>
+
+          <View style={[styles.formGroup, { backgroundColor: colorScheme === 'dark' ? '#1c1c1e' : '#ffffff' }]}>
+            <Text style={[styles.label, { color: colors.text }]}>{t('matches.new.maxPlayers')}</Text>
+            <TextInput
+              style={[styles.input, { color: colors.text, borderColor: colors.tabIconDefault }]}
+              value={maxPlayers}
+              onChangeText={setMaxPlayers}
+              keyboardType="number-pad"
+              placeholder={t('matches.new.maxPlayersPlaceholder')}
+              placeholderTextColor={colors.tabIconDefault}
             />
-          )}
-        </View>
+          </View>
 
-        <View style={[styles.formGroup, { backgroundColor: colorScheme === 'dark' ? '#1c1c1e' : '#ffffff' }]}>
-          <Text style={[styles.label, { color: colors.text }]}>{t('matches.new.time')}</Text>
           <Pressable
-            style={[styles.dateTimeButton, { backgroundColor: colors.tint }]}
-            onPress={() => setShowTimePicker(true)}>
-            <Text style={styles.dateTimeButtonText}>
-              {time.toLocaleTimeString('nl-NL', {hour: '2-digit', minute: '2-digit'})}
-            </Text>
+            style={[styles.createButton, { backgroundColor: colors.tint }]}
+            onPress={handleCreateMatch}>
+            <Text style={styles.createButtonText}>{t('matches.new.create')}</Text>
           </Pressable>
-          {showTimePicker && (
-            <DateTimePicker
-              value={time}
-              mode="time"
-              display="default"
-              onChange={(event, selectedTime) => {
-                setShowTimePicker(false);
-                if (selectedTime) {
-                  setTime(selectedTime);
-                }
-              }}
-            />
-          )}
         </View>
-
-        <View style={[styles.formGroup, { backgroundColor: colorScheme === 'dark' ? '#1c1c1e' : '#ffffff' }]}>
-          <Text style={[styles.label, { color: colors.text }]}>{t('matches.new.maxPlayers')}</Text>
-          <TextInput
-            style={[styles.input, { color: colors.text, borderColor: colors.tabIconDefault }]}
-            value={maxPlayers}
-            onChangeText={setMaxPlayers}
-            keyboardType="number-pad"
-            placeholder={t('matches.new.maxPlayersPlaceholder')}
-            placeholderTextColor={colors.tabIconDefault}
-          />
-        </View>
-
-        <Pressable
-          style={[styles.createButton, { backgroundColor: colors.tint }]}
-          onPress={handleCreateMatch}>
-          <Text style={styles.createButtonText}>{t('matches.new.create')}</Text>
-        </Pressable>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -195,6 +207,12 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     width: 44,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   content: {
     flex: 1,
@@ -256,10 +274,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 'auto',
+    marginBottom: 16,
   },
   createButtonText: {
     color: 'white',
     fontSize: 16,
     fontWeight: '600',
+  },
+  pickerContainer: {
+    marginTop: 8,
+    backgroundColor: 'transparent',
   },
 }); 

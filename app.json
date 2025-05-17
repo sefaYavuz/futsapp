@@ -9,14 +9,23 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Allow FutsApp to use your location to show directions to match venues.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Allow FutsApp to use your location to show directions to match venues.",
+        "NSLocationAlwaysUsageDescription": "Allow FutsApp to use your location to show directions to match venues."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -32,6 +41,14 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow FutsApp to use your location to show directions to match venues.",
+          "locationAlwaysPermission": "Allow FutsApp to use your location to show directions to match venues.",
+          "locationWhenInUsePermission": "Allow FutsApp to use your location to show directions to match venues."
         }
       ]
     ],
