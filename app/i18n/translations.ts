@@ -43,6 +43,7 @@ export const nl = {
       notFound: 'Wedstrijd niet gevonden',
       signInRequired: 'Log in om een wedstrijd aan te maken of deel te nemen',
       permissionDenied: 'Je hebt geen toestemming om wedstrijden aan te maken',
+      permissionDeniedSubtext: 'Je hebt geen rechten om een wedstrijd aan te maken. Je wordt doorgestuurd...',
       matchFull: 'Deze wedstrijd is vol',
       alreadyJoined: 'Je bent al aangemeld voor deze wedstrijd',
       fillAllFields: 'Vul alle velden in',

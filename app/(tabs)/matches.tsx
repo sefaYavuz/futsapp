@@ -3,13 +3,12 @@ import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { Alert, ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LOCATIONS, getLocationByName } from '../../constants/Locations';
 import { useTranslation } from '../hooks/useTranslation';
 import { useMatchesStore } from '../store/matches';
 import { useUserStore } from '../store/user';
-import { getRolePermissions } from '../types/user';
 
 export default function MatchesScreen() {
   const colorScheme = useColorScheme();
@@ -20,20 +19,6 @@ export default function MatchesScreen() {
   const { t } = useTranslation();
 
   const handleAddMatch = () => {
-    if (!currentUser) {
-      Alert.alert(t('matches.alerts.error'), t('matches.alerts.signInRequired'));
-      return;
-    }
-
-    const permissions = getRolePermissions(currentUser.role);
-    if (!permissions.canCreateMatch) {
-      Alert.alert(
-        t('matches.alerts.error'),
-        t('matches.alerts.permissionDenied'),
-      );
-      return;
-    }
-
     router.push('/matches/new');
   };
 
@@ -42,7 +27,7 @@ export default function MatchesScreen() {
       <View style={styles.header}>
         <Text style={[styles.title, { color: colors.text }]}>{t('matches.title')}</Text>
         <Pressable
-          style={[styles.addButton, { backgroundColor: colors.tint }]}
+          style={[styles.addButton, { backgroundColor: colors.tint.default }]}
           onPress={handleAddMatch}>
           <IconSymbol name="plus" size={24} color="white" />
         </Pressable>

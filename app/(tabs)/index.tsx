@@ -3,7 +3,6 @@ import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { styled } from 'nativewind';
 import { useEffect, useRef } from 'react';
 import { Animated, Dimensions, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,12 +10,6 @@ import { useTranslation } from '../hooks/useTranslation';
 import { useMatchesStore } from '../store/matches';
 import { useStatsStore } from '../store/stats';
 import { useUserStore } from '../store/user';
-
-const StyledView = styled(View);
-const StyledText = styled(Text);
-const StyledPressable = styled(Pressable);
-const StyledScrollView = styled(ScrollView);
-const StyledSafeAreaView = styled(SafeAreaView);
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width - 48; // Full width minus padding
@@ -78,8 +71,8 @@ export default function DashboardScreen() {
   };
 
   return (
-    <StyledSafeAreaView style={{ flex: 1, backgroundColor: colorScheme === 'dark' ? '#0f172a' : '#f8fafc' }}>
-      <StyledScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 32 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 32 }}>
         {/* Welcome Section */}
         <Animated.View style={{ 
           opacity: fadeAnim,
@@ -91,10 +84,7 @@ export default function DashboardScreen() {
           paddingTop: 24,
           paddingBottom: 24
         }}>
-          <LinearGradient
-            colors={['#16a34a', '#15803d']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
+          <View
             style={{ 
               borderRadius: 0, 
               padding: 24,
@@ -103,14 +93,15 @@ export default function DashboardScreen() {
               shadowOpacity: 0.2,
               shadowRadius: 8,
               elevation: 5,
+              backgroundColor: colors.tint.default,
             }}>
-            <StyledText style={{ fontSize: 28, fontWeight: 'bold', color: 'white', marginBottom: 8 }}>
+            <Text style={{ fontSize: 28, fontWeight: 'bold', color: 'white', marginBottom: 8 }}>
               {currentUser ? t('home.welcomeWithName').replace('{{name}}', currentUser.name) : t('home.welcome')}
-            </StyledText>
-            <StyledText style={{ fontSize: 16, color: 'rgba(255, 255, 255, 0.9)' }}>
+            </Text>
+            <Text style={{ fontSize: 16, color: 'rgba(255, 255, 255, 0.9)' }}>
               {t('home.welcomeSubtext')}
-            </StyledText>
-          </LinearGradient>
+            </Text>
+          </View>
         </Animated.View>
 
         {/* Quick Actions */}
@@ -123,11 +114,11 @@ export default function DashboardScreen() {
           paddingHorizontal: 24,
           marginBottom: 32
         }}>
-          <StyledText style={{ fontSize: 24, fontWeight: '600', color: colorScheme === 'dark' ? 'white' : '#0f172a', marginBottom: 20 }}>
+          <Text style={{ fontSize: 24, fontWeight: '600', color: colorScheme === 'dark' ? 'white' : '#0f172a', marginBottom: 20 }}>
             {t('home.actions.quickActions')}
-          </StyledText>
-          <StyledView style={{ flexDirection: 'row', gap: 16 }}>
-            <StyledPressable
+          </Text>
+          <View style={{ flexDirection: 'row', gap: 16 }}>
+            <Pressable
               onPress={handleCreateMatch}
               style={({ pressed }) => ({
                 flex: 1,
@@ -148,12 +139,12 @@ export default function DashboardScreen() {
                 style={{ width: 64, height: 64, borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
                 <IconSymbol name="plus" size={32} color="white" />
               </LinearGradient>
-              <StyledText style={{ color: colorScheme === 'dark' ? 'white' : '#0f172a', fontWeight: '600', fontSize: 18 }}>
+              <Text style={{ color: colorScheme === 'dark' ? 'white' : '#0f172a', fontWeight: '600', fontSize: 18 }}>
                 {t('home.actions.createMatch')}
-              </StyledText>
-            </StyledPressable>
+              </Text>
+            </Pressable>
 
-            <StyledPressable
+            <Pressable
               onPress={handleViewMatches}
               style={({ pressed }) => ({
                 flex: 1,
@@ -174,12 +165,12 @@ export default function DashboardScreen() {
                 style={{ width: 64, height: 64, borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
                 <IconSymbol name="calendar" size={32} color="white" />
               </LinearGradient>
-              <StyledText style={{ color: colorScheme === 'dark' ? 'white' : '#0f172a', fontWeight: '600', fontSize: 18 }}>
+              <Text style={{ color: colorScheme === 'dark' ? 'white' : '#0f172a', fontWeight: '600', fontSize: 18 }}>
                 {t('home.actions.viewMatches')}
-              </StyledText>
-            </StyledPressable>
+              </Text>
+            </Pressable>
 
-            <StyledPressable
+            <Pressable
               onPress={() => router.push('/settings')}
               style={({ pressed }) => ({
                 flex: 1,
@@ -200,11 +191,11 @@ export default function DashboardScreen() {
                 style={{ width: 64, height: 64, borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
                 <IconSymbol name="gearshape" size={32} color="white" />
               </LinearGradient>
-              <StyledText style={{ color: colorScheme === 'dark' ? 'white' : '#0f172a', fontWeight: '600', fontSize: 18 }}>
+              <Text style={{ color: colorScheme === 'dark' ? 'white' : '#0f172a', fontWeight: '600', fontSize: 18 }}>
                 {t('common.settings')}
-              </StyledText>
-            </StyledPressable>
-          </StyledView>
+              </Text>
+            </Pressable>
+          </View>
         </Animated.View>
 
         {/* User Stats - Temporarily disabled
@@ -344,12 +335,12 @@ export default function DashboardScreen() {
           paddingHorizontal: 24,
           marginBottom: 32
         }}>
-          <StyledText style={{ fontSize: 24, fontWeight: '600', color: colorScheme === 'dark' ? 'white' : '#0f172a', marginBottom: 20 }}>
+          <Text style={{ fontSize: 24, fontWeight: '600', color: colorScheme === 'dark' ? 'white' : '#0f172a', marginBottom: 20 }}>
             {t('home.upcomingMatches')}
-          </StyledText>
+          </Text>
           {upcomingMatches.length > 0 ? (
             upcomingMatches.map((match) => (
-              <StyledPressable
+              <Pressable
                 key={match.id}
                 onPress={() => router.push(`/matches/${match.id}`)}
                 style={({ pressed }) => ({
@@ -364,24 +355,24 @@ export default function DashboardScreen() {
                   elevation: 4,
                   transform: [{ scale: pressed ? 0.98 : 1 }],
                 })}>
-                <StyledView style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                  <StyledText style={{ color: colorScheme === 'dark' ? 'white' : '#0f172a', fontWeight: '600', fontSize: 18 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                  <Text style={{ color: colorScheme === 'dark' ? 'white' : '#0f172a', fontWeight: '600', fontSize: 18 }}>
                     {match.location}
-                  </StyledText>
-                  <StyledText style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#64748b', fontSize: 14 }}>
+                  </Text>
+                  <Text style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#64748b', fontSize: 14 }}>
                     {new Date(`${match.date}T${match.time}`).toLocaleDateString('nl-NL')} {match.time}
-                  </StyledText>
-                </StyledView>
-                <StyledView style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  </Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <IconSymbol name="person" size={16} color={colorScheme === 'dark' ? '#94a3b8' : '#64748b'} />
-                  <StyledText style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#64748b', fontSize: 14, marginLeft: 8 }}>
+                  <Text style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#64748b', fontSize: 14, marginLeft: 8 }}>
                     {match.players.length} {t('matches.players')}
-                  </StyledText>
-                </StyledView>
-              </StyledPressable>
+                  </Text>
+                </View>
+              </Pressable>
             ))
           ) : (
-            <StyledView style={{ 
+            <View style={{ 
               backgroundColor: colorScheme === 'dark' ? '#1e293b' : 'white',
               borderRadius: 20,
               padding: 32,
@@ -393,10 +384,10 @@ export default function DashboardScreen() {
               elevation: 4,
             }}>
               <IconSymbol name="calendar" size={48} color={colorScheme === 'dark' ? '#94a3b8' : '#64748b'} />
-              <StyledText style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#64748b', textAlign: 'center', fontSize: 16, marginTop: 16 }}>
+              <Text style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#64748b', textAlign: 'center', fontSize: 16, marginTop: 16 }}>
                 {t('home.noUpcomingMatches')}
-              </StyledText>
-            </StyledView>
+              </Text>
+            </View>
           )}
         </Animated.View>
 
@@ -410,10 +401,10 @@ export default function DashboardScreen() {
           paddingHorizontal: 24,
           marginBottom: 32
         }}>
-          <StyledText style={{ fontSize: 24, fontWeight: '600', color: colorScheme === 'dark' ? 'white' : '#0f172a', marginBottom: 20 }}>
+          <Text style={{ fontSize: 24, fontWeight: '600', color: colorScheme === 'dark' ? 'white' : '#0f172a', marginBottom: 20 }}>
             {t('home.futsalTip')}
-          </StyledText>
-          <StyledView style={{ 
+          </Text>
+          <View style={{ 
             backgroundColor: colorScheme === 'dark' ? '#1e293b' : 'white',
             borderRadius: 20,
             padding: 32,
@@ -424,7 +415,7 @@ export default function DashboardScreen() {
             elevation: 4,
             width: CARD_WIDTH,
           }}>
-            <StyledView style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 24 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 24 }}>
               <LinearGradient
                 colors={['#16a34a', '#15803d']}
                 start={{ x: 0, y: 0 }}
@@ -432,18 +423,18 @@ export default function DashboardScreen() {
                 style={{ width: 64, height: 64, borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginRight: 16 }}>
                 <IconSymbol name="lightbulb" size={32} color="white" />
               </LinearGradient>
-              <StyledView style={{ flex: 1 }}>
-                <StyledText style={{ color: colorScheme === 'dark' ? 'white' : '#0f172a', fontWeight: '600', fontSize: 20, marginBottom: 12 }}>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: colorScheme === 'dark' ? 'white' : '#0f172a', fontWeight: '600', fontSize: 20, marginBottom: 12 }}>
                   {t('home.futsalTipTitle')}
-                </StyledText>
-                <StyledText style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#64748b', fontSize: 16, lineHeight: 24 }}>
+                </Text>
+                <Text style={{ color: colorScheme === 'dark' ? '#94a3b8' : '#64748b', fontSize: 16, lineHeight: 24 }}>
                   {t('home.futsalTipText')}
-                </StyledText>
-              </StyledView>
-            </StyledView>
-          </StyledView>
+                </Text>
+              </View>
+            </View>
+          </View>
         </Animated.View>
-      </StyledScrollView>
-    </StyledSafeAreaView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }

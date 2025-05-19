@@ -4,13 +4,14 @@ import { LOCATIONS } from '@/constants/Locations';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Stack, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from '../hooks/useTranslation';
 import { useMatchesStore } from '../store/matches';
 import { useUserStore } from '../store/user';
 import { Match } from '../types/match';
+import { getRolePermissions } from '../types/user';
 
 export default function NewMatchScreen() {
   const colorScheme = useColorScheme();
@@ -26,6 +27,18 @@ export default function NewMatchScreen() {
   const [maxPlayers, setMaxPlayers] = useState('10');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+
+  const permissions = currentUser ? getRolePermissions(currentUser.role) : null;
+  const canCreateMatch = permissions?.canCreateMatch;
+
+  useEffect(() => {
+    if (!currentUser || (currentUser && !canCreateMatch)) {
+      const timeout = setTimeout(() => {
+        router.push('/matches');
+      }, 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [currentUser, canCreateMatch]);
 
   const handleCreateMatch = () => {
     if (!currentUser) {
@@ -74,6 +87,32 @@ export default function NewMatchScreen() {
     setShowTimePicker(false);
   };
 
+  if (!currentUser || (currentUser && !canCreateMatch)) {
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}> 
+        <Stack.Screen options={{ headerShown: false }} />
+        <View style={styles.header}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => router.back()}>
+            <IconSymbol name="chevron.left" size={24} color={colors.text} />
+          </Pressable>
+          <Text style={[styles.title, { color: colors.text }]}>{t('matches.new.title')}</Text>
+          <View style={styles.placeholder} />
+        </View>
+        <View style={{ padding: 24, alignItems: 'center', justifyContent: 'center' }}>
+          <IconSymbol name="exclamationmark.triangle.fill" size={48} color={colors.error} />
+          <Text style={{ color: colors.error, fontSize: 18, fontWeight: 'bold', marginTop: 16, textAlign: 'center' }}>
+            {t('matches.alerts.permissionDenied')}
+          </Text>
+          <Text style={{ color: colors.text, marginTop: 8, textAlign: 'center' }}>
+            {t('matches.alerts.permissionDeniedSubtext') || 'You do not have permission to create a match. Redirecting...'}
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <Stack.Screen options={{ headerShown: false }} />
@@ -92,93 +131,97 @@ export default function NewMatchScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
-          <View style={[styles.formGroup, { backgroundColor: colorScheme === 'dark' ? '#1c1c1e' : '#ffffff' }]}>
-            <Text style={[styles.label, { color: colors.text }]}>{t('matches.new.location')}</Text>
-            <View style={styles.locationContainer}>
-              {Object.values(LOCATIONS).map((loc) => (
-                <Pressable
-                  key={loc.id}
-                  style={[
-                    styles.locationButton,
-                    location?.id === loc.id && { backgroundColor: colors.tint },
-                  ]}
-                  onPress={() => setLocation(loc)}>
-                  <Text
+          <View style={styles.formContainer}>
+            <View style={[styles.formGroup, { backgroundColor: colorScheme === 'dark' ? '#1c1c1e' : '#ffffff' }]}>
+              <Text style={[styles.label, { color: colors.text }]}>{t('matches.new.location')}</Text>
+              <View style={styles.locationContainer}>
+                {Object.values(LOCATIONS).map((loc) => (
+                  <Pressable
+                    key={loc.id}
                     style={[
-                      styles.locationButtonText,
-                      { color: location?.id === loc.id ? 'white' : colors.text },
-                    ]}>
-                    {loc.name}
-                  </Text>
-                </Pressable>
-              ))}
+                      styles.locationButton,
+                      { backgroundColor: colors.tint.darker },
+                      location?.id === loc.id && { backgroundColor: colors.tint.default },
+                    ]}
+                    onPress={() => setLocation(loc)}>
+                    <Text
+                      style={[
+                        styles.locationButtonText,
+                        { color: location?.id === loc.id ? colors.text : colors.text },
+                      ]}>
+                      {loc.name}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+
+            <View style={[styles.formGroup, { backgroundColor: colorScheme === 'dark' ? '#1c1c1e' : '#ffffff' }]}>
+              <Text style={[styles.label, { color: colors.text }]}>{t('matches.new.date')}</Text>
+              <Pressable
+                style={[styles.dateTimeButton, { backgroundColor: colors.tint.default }]}
+                onPress={() => setShowDatePicker(true)}>
+                <Text style={styles.dateTimeButtonText}>
+                  {date.toLocaleDateString('nl-NL', {month: 'short', day: 'numeric'})}
+                </Text>
+              </Pressable>
+              {showDatePicker && (
+                <View style={styles.pickerContainer}>
+                  <DateTimePicker
+                    testID="datePicker"
+                    value={date}
+                    mode="date"
+                    display="spinner"
+                    onChange={handleDateChange}
+                    minimumDate={new Date()}
+                  />
+                </View>
+              )}
+            </View>
+
+            <View style={[styles.formGroup, { backgroundColor: colorScheme === 'dark' ? '#1c1c1e' : '#ffffff' }]}>
+              <Text style={[styles.label, { color: colors.text }]}>{t('matches.new.time')}</Text>
+              <Pressable
+                style={[styles.dateTimeButton, { backgroundColor: colors.tint.default }]}
+                onPress={() => setShowTimePicker(true)}>
+                <Text style={styles.dateTimeButtonText}>
+                  {time.toLocaleTimeString('nl-NL', {hour: '2-digit', minute: '2-digit'})}
+                </Text>
+              </Pressable>
+              {showTimePicker && (
+                <View style={styles.pickerContainer}>
+                  <DateTimePicker
+                    testID="timePicker"
+                    value={time}
+                    mode="time"
+                    display="spinner"
+                    onChange={handleTimeChange}
+                  />
+                </View>
+              )}
+            </View>
+
+            <View style={[styles.formGroup, { backgroundColor: colorScheme === 'dark' ? '#1c1c1e' : '#ffffff' }]}>
+              <Text style={[styles.label, { color: colors.text }]}>{t('matches.new.maxPlayers')}</Text>
+              <TextInput
+                style={[styles.input, { color: colors.text, borderColor: colors.tabIconDefault }]}
+                value={maxPlayers}
+                onChangeText={setMaxPlayers}
+                keyboardType="number-pad"
+                placeholder={t('matches.new.maxPlayersPlaceholder')}
+                placeholderTextColor={colors.tabIconDefault}
+              />
             </View>
           </View>
-
-          <View style={[styles.formGroup, { backgroundColor: colorScheme === 'dark' ? '#1c1c1e' : '#ffffff' }]}>
-            <Text style={[styles.label, { color: colors.text }]}>{t('matches.new.date')}</Text>
-            <Pressable
-              style={[styles.dateTimeButton, { backgroundColor: colors.tint }]}
-              onPress={() => setShowDatePicker(true)}>
-              <Text style={styles.dateTimeButtonText}>
-                {date.toLocaleDateString('nl-NL', {month: 'short', day: 'numeric'})}
-              </Text>
-            </Pressable>
-            {showDatePicker && (
-              <View style={styles.pickerContainer}>
-                <DateTimePicker
-                  testID="datePicker"
-                  value={date}
-                  mode="date"
-                  display="spinner"
-                  onChange={handleDateChange}
-                  minimumDate={new Date()}
-                />
-              </View>
-            )}
-          </View>
-
-          <View style={[styles.formGroup, { backgroundColor: colorScheme === 'dark' ? '#1c1c1e' : '#ffffff' }]}>
-            <Text style={[styles.label, { color: colors.text }]}>{t('matches.new.time')}</Text>
-            <Pressable
-              style={[styles.dateTimeButton, { backgroundColor: colors.tint }]}
-              onPress={() => setShowTimePicker(true)}>
-              <Text style={styles.dateTimeButtonText}>
-                {time.toLocaleTimeString('nl-NL', {hour: '2-digit', minute: '2-digit'})}
-              </Text>
-            </Pressable>
-            {showTimePicker && (
-              <View style={styles.pickerContainer}>
-                <DateTimePicker
-                  testID="timePicker"
-                  value={time}
-                  mode="time"
-                  display="spinner"
-                  onChange={handleTimeChange}
-                />
-              </View>
-            )}
-          </View>
-
-          <View style={[styles.formGroup, { backgroundColor: colorScheme === 'dark' ? '#1c1c1e' : '#ffffff' }]}>
-            <Text style={[styles.label, { color: colors.text }]}>{t('matches.new.maxPlayers')}</Text>
-            <TextInput
-              style={[styles.input, { color: colors.text, borderColor: colors.tabIconDefault }]}
-              value={maxPlayers}
-              onChangeText={setMaxPlayers}
-              keyboardType="number-pad"
-              placeholder={t('matches.new.maxPlayersPlaceholder')}
-              placeholderTextColor={colors.tabIconDefault}
-            />
-          </View>
-
-          <Pressable
-            style={[styles.createButton, { backgroundColor: colors.tint }]}
-            onPress={handleCreateMatch}>
-            <Text style={styles.createButtonText}>{t('matches.new.create')}</Text>
-          </Pressable>
         </View>
       </ScrollView>
+      <View style={styles.createButtonContainer}>
+        <Pressable
+          style={[styles.createButton, { backgroundColor: colors.tint.default }]}
+          onPress={handleCreateMatch}>
+          <Text style={styles.createButtonText}>{t('matches.new.create')}</Text>
+        </Pressable>
+      </View>
     </SafeAreaView>
   );
 }
@@ -217,6 +260,9 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 16,
+  },
+  formContainer: {
+    flex: 1,
   },
   formGroup: {
     borderRadius: 16,
@@ -268,13 +314,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontSize: 16,
   },
+  createButtonContainer: {
+    padding: 16,
+    backgroundColor: 'transparent',
+  },
   createButton: {
     height: 50,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 'auto',
-    marginBottom: 16,
   },
   createButtonText: {
     color: 'white',

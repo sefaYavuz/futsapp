@@ -71,7 +71,7 @@ export default function SettingsScreen() {
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.text }]}>Sign in to access settings</Text>
             <Pressable
-              style={[styles.signInButton, { backgroundColor: colors.tint }]}
+              style={[styles.signInButton, { backgroundColor: colors.tint.default }]}
               onPress={handleSignIn}>
               <Text style={styles.signInButtonText}>Sign In</Text>
             </Pressable>

@@ -55,14 +55,14 @@ export default function RoleScreen() {
               styles.roleCard,
               {
                 backgroundColor: colorScheme === 'dark' ? '#1c1c1e' : '#ffffff',
-                borderColor: currentUser?.role === role ? colors.tint : 'transparent',
+                borderColor: currentUser?.role === role ? colors.tint.default : 'transparent',
               },
             ]}
             onPress={() => handleRoleChange(role)}>
             <View style={styles.roleHeader}>
               <Text style={[styles.roleLabel, { color: colors.text }]}>{label}</Text>
               {currentUser?.role === role && (
-                <IconSymbol name="checkmark.circle.fill" size={24} color={colors.tint} />
+                <IconSymbol name="checkmark.circle.fill" size={24} color={colors.tint.default} />
               )}
             </View>
             <Text style={[styles.roleDescription, { color: colors.tabIconDefault }]}>

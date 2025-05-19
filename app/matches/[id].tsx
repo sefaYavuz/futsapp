@@ -262,7 +262,7 @@ export default function MatchDetailsScreen() {
                 {routeCoordinates.length > 0 && (
                   <Polyline
                     coordinates={routeCoordinates}
-                    strokeColor={colors.tint}
+                    strokeColor={colors.tint.default}
                     strokeWidth={4}
                     lineDashPattern={[1]}
                   />
@@ -299,7 +299,7 @@ export default function MatchDetailsScreen() {
                 </Pressable>
               ) : (
                 <Pressable
-                  style={[styles.actionButton, { backgroundColor: colors.tint }]}
+                  style={[styles.actionButton, { backgroundColor: colors.tint.default }]}
                   onPress={handleJoinMatch}>
                   <Text style={styles.actionButtonText}>{t('matches.actions.join')}</Text>
                 </Pressable>
